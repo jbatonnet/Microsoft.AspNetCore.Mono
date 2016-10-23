@@ -22,22 +22,12 @@ namespace Microsoft.AspNetCore.Mono
 
         public bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies)
         {
-            string[] searchDirectories = new string[]
-            {
-                Environment.CurrentDirectory,
-                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                "/usr/lib/mono/4.5",
-                "/usr/lib/mono/4.5/Facades",
-            };
+            string assemblyPath = MonoAssemblyResolver.FindAssembly(library.Name);
 
-            foreach (string directory in searchDirectories)
+            if (assemblyPath != null)
             {
-                FileInfo fileInfo = new FileInfo(Path.Combine(directory, library.Name + ".dll"));
-                if (fileInfo.Exists)
-                {
-                    assemblies.Add(fileInfo.FullName);
-                    return true;
-                }
+                assemblies.Add(assemblyPath);
+                return true;
             }
 
             return Resolver.TryResolveAssemblyPaths(library, assemblies);
