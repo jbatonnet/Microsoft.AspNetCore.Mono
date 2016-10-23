@@ -2,12 +2,9 @@
 <package>
     <metadata>
         <id>Microsoft.AspNetCore.Mono</id>
-        <version>0.1.0</version>
-        <title>Microsoft.AspNetCore.Mono</title>
+        <version>$version$</version>
         <authors>Julien Batonnet</authors>
-        <owners>Julien Batonnet</owners>
         <description>Mono support for ASP.NET Core</description>
-        <copyright>Copyright 2016</copyright>
         <tags>AspNetCore Mono</tags>
         <dependencies>
             <dependency id="Microsoft.AspNetCore.Hosting" version="1.0.0" />
