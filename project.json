@@ -1,0 +1,13 @@
+{
+    "version": "0.1.2",
+    "buildOptions": {
+        "debugType": "portable"
+    },
+    "dependencies": {
+        "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0",
+        "Microsoft.Extensions.DependencyModel": "1.0.0"
+    },
+    "frameworks": {
+        "net451": {}
+    }
+}
