@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mono;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.DependencyModel.Resolution;
 
-namespace Microsoft.AspNetCore.Mono
+namespace Microsoft.AspNetCore.Hosting
 {
     public static class WebHostBuilderExtensions
     {
