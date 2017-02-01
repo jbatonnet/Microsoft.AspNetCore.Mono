@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.DependencyModel.Resolution;
 
@@ -22,7 +15,7 @@ namespace Microsoft.AspNetCore.Mono
 
         public bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies)
         {
-            string assemblyPath = MonoAssemblyResolver.FindAssembly(library.Name);
+            var assemblyPath = MonoAssemblyResolver.FindAssembly(library.Name);
 
             if (assemblyPath != null)
             {

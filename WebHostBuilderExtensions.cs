@@ -1,13 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-
-using Microsoft.AspNetCore.Mono;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.DependencyModel.Resolution;
 
-namespace Microsoft.AspNetCore.Hosting
+namespace Microsoft.AspNetCore.Mono
 {
     public static class WebHostBuilderExtensions
     {
@@ -21,21 +19,27 @@ namespace Microsoft.AspNetCore.Hosting
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             // Access default resolver
-            Type compilationLibraryType = typeof(CompilationLibrary);
-            PropertyInfo defaultResolverProperty = compilationLibraryType.GetProperty("DefaultResolver", BindingFlags.NonPublic | BindingFlags.Static);
+            var compilationLibraryType = typeof(CompilationLibrary);
+            var defaultResolverProperty = compilationLibraryType.GetProperty(
+                "DefaultResolver",
+                BindingFlags.NonPublic | BindingFlags.Static
+            );
 
-            CompositeCompilationAssemblyResolver defaultResolver = defaultResolverProperty.GetValue(null) as CompositeCompilationAssemblyResolver;
+            var defaultResolver = defaultResolverProperty.GetValue(null) as CompositeCompilationAssemblyResolver;
 
             // Access resolvers array
-            Type compositeCompilationAssemblyResolverType = typeof(CompositeCompilationAssemblyResolver);
-            FieldInfo resolversField = compositeCompilationAssemblyResolverType.GetField("_resolvers", BindingFlags.NonPublic | BindingFlags.Instance);
+            var compositeCompilationAssemblyResolverType = typeof(CompositeCompilationAssemblyResolver);
+            var resolversField = compositeCompilationAssemblyResolverType.GetField(
+                "_resolvers",
+                BindingFlags.NonPublic | BindingFlags.Instance
+            );
 
-            ICompilationAssemblyResolver[] resolvers = resolversField.GetValue(defaultResolver) as ICompilationAssemblyResolver[];
+            var resolvers = resolversField.GetValue(defaultResolver) as ICompilationAssemblyResolver[];
 
             // Replace .NET resolver with a Mono one
-            for (int i = 0; i < resolvers.Length; i++)
+            for (var i = 0; i < resolvers.Length; i++)
             {
-                ReferenceAssemblyPathResolver referenceAssemblyPathResolver = resolvers[i] as ReferenceAssemblyPathResolver;
+                var referenceAssemblyPathResolver = resolvers[i] as ReferenceAssemblyPathResolver;
 
                 if (referenceAssemblyPathResolver != null)
                     resolvers[i] = new MonoCompilationAssemblyResolver(referenceAssemblyPathResolver);
@@ -46,22 +50,19 @@ namespace Microsoft.AspNetCore.Hosting
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            AssemblyName assemblyName = new AssemblyName(args.Name);
+            var assemblyName = new AssemblyName(args.Name);
 
             string hintPath = null;
             if (args.RequestingAssembly?.IsDynamic == false)
             {
-                string requestingAssemblyPath = args.RequestingAssembly.Location;
+                var requestingAssemblyPath = args.RequestingAssembly.Location;
 
                 if (!string.IsNullOrEmpty(requestingAssemblyPath))
                     hintPath = Path.GetDirectoryName(requestingAssemblyPath);
             }
 
-            string assemblyPath = MonoAssemblyResolver.FindAssembly(assemblyName.Name, hintPath);
-            if (assemblyPath != null)
-                return Assembly.LoadFile(assemblyPath);
-
-            return null;
+            var assemblyPath = MonoAssemblyResolver.FindAssembly(assemblyName.Name, hintPath);
+            return assemblyPath != null ? Assembly.LoadFile(assemblyPath) : null;
         }
     }
 }
